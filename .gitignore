@@ -1,0 +1,28 @@
+# VS build outputs
+x64/
+Debug/
+Release/
+*.aps
+*.log
+*.suo
+*.user
+*.sdf
+*.opensdf
+*.tlog
+*.ipch
+
+# Backup files
+*.bak
+
+# Temp files
+RCa*
+RCb*
+RCc*
+_h.py
+fix.py
+gen_header.py
+gen.py
+test_write.py
+
+# packages
+packages/

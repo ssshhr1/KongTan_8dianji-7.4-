@@ -1,0 +1,286 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+#include "verrsrc.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 中文(简体，中国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "#include ""verrsrc.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#include ""res\\KongTan8dianji.rc2""  // 非 Microsoft Visual C++ 编辑的资源\r\n"
+    "#include ""l.CHS\\afxres.rc""      // 标准组件\r\n"
+    "#if !defined(_AFXDLL)\r\n"
+    "#include ""l.CHS\\afxribbon.rc""   // MFC 功能区和控制条资源\r\n"
+    "#endif\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\KongTan_8dianji.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "关于 KongTan_8dianji"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,21,20
+    LTEXT           "KongTan_8dianji，版本 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "版权所有 (C) 2026",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "确定",IDOK,113,41,50,14,WS_GROUP
+END
+
+IDD_KONGTAN_8DIANJI_DIALOG DIALOGEX 0, 0, 396, 336
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "孔探检测-8电机"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT1,28,29,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,28,62,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT3,29,113,41,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT4,27,165,40,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "S1-上",IDC_BUTTON1,162,29,50,14
+    PUSHBUTTON      "S1-下",IDC_BUTTON2,239,29,50,14
+    PUSHBUTTON      "S1-上下复位",IDC_BUTTON3,316,29,50,14
+    PUSHBUTTON      "S1-左",IDC_BUTTON4,162,62,50,14
+    PUSHBUTTON      "S1-右",IDC_BUTTON5,239,62,50,14
+    PUSHBUTTON      "S1-左右复位",IDC_BUTTON6,316,62,50,14
+    PUSHBUTTON      "S2-勾",IDC_BUTTON7,162,113,50,14
+    PUSHBUTTON      "S2-回",IDC_BUTTON8,238,113,50,14
+    PUSHBUTTON      "S2-复位",IDC_BUTTON9,314,113,50,14
+    PUSHBUTTON      "S3-俯",IDC_BUTTON10,161,165,50,14
+    PUSHBUTTON      "S3-仰",IDC_BUTTON11,238,165,50,14
+    PUSHBUTTON      "S3-复位",IDC_BUTTON12,315,165,50,14
+    EDITTEXT        IDC_EDIT5,95,29,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT6,95,62,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT7,96,113,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT8,94,165,40,14,ES_AUTOHSCROLL
+    GROUPBOX        "第一段",IDC_STATIC,16,7,361,75
+    GROUPBOX        "第二段",IDC_STATIC,16,89,361,45
+    GROUPBOX        "第三段",IDC_STATIC,16,141,361,43
+    LTEXT           "速度",IDC_STATIC,41,18,15,8
+    LTEXT           "位移",IDC_STATIC,107,17,15,8
+    LTEXT           "速度",IDC_STATIC,41,49,15,8
+    LTEXT           "位移",IDC_STATIC,107,49,15,8
+    LTEXT           "速度",IDC_STATIC,42,102,15,8
+    LTEXT           "位移",IDC_STATIC,108,102,15,8
+    LTEXT           "速度",IDC_STATIC,40,153,15,8
+    LTEXT           "位移",IDC_STATIC,106,153,15,8
+    GROUPBOX        "弯曲角度",IDC_STATIC,16,188,361,32
+    LTEXT           "θ3(度)",IDC_STATIC,24,200,24,8
+    EDITTEXT        IDC_EDIT_BEND3,50,198,36,14,ES_AUTOHSCROLL
+    LTEXT           "θ4(度)",IDC_STATIC,96,200,24,8
+    EDITTEXT        IDC_EDIT_BEND4,122,198,36,14,ES_AUTOHSCROLL
+    LTEXT           "平面角φ",IDC_STATIC,168,200,28,8
+    EDITTEXT        IDC_EDIT_PLANE,200,198,36,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "执行弯曲",IDC_BTN_EXECUTE_BENDING,248,198,56,14
+    GROUPBOX        "逆解驱动",IDC_STATIC,16,223,361,89
+    EDITTEXT        IDC_EDIT_IK_X,43,233,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_IK_Z,112,232,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_IK_Y,180,232,40,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "执行逆运动学求解并驱动电机",IDC_BTN_IK_SOLVE,258,246,106,14
+    LTEXT           "X 坐标",IDC_STATIC,20,238,23,8
+    LTEXT           "Z坐标",IDC_STATIC,90,238,20,8
+    LTEXT           "Y 坐标",IDC_STATIC,155,238,25,8
+    EDITTEXT        IDC_EDIT9,28,297,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT10,86,297,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT11,142,296,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT12,198,296,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT13,254,296,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT14,313,296,40,14,ES_AUTOHSCROLL
+    LTEXT           "电机1推拉量 Δ1",IDC_STATIC,24,286,54,8
+    LTEXT           " Δ2",IDC_STATIC,101,286,12,8
+    LTEXT           " Δ3",IDC_STATIC,159,286,12,8
+    LTEXT           " Δ4",IDC_STATIC,214,286,12,8
+    LTEXT           " Δ5",IDC_STATIC,268,286,12,8
+    LTEXT           " Δ6",IDC_STATIC,326,286,12,8
+    PUSHBUTTON      "全部复位",IDC_BUTTON13,60,318,50,14
+    PUSHBUTTON      "退出",IDCCANCEL,284,318,50,14
+    PUSHBUTTON      "比例调速",IDC_BTN_PROPORTIONAL_HOOK,160,318,56,14
+    EDITTEXT        IDC_EDIT_ROLL,43,263,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_PITCH,113,263,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_YAW,180,263,40,14,ES_AUTOHSCROLL
+    LTEXT           "Rx",IDC_STATIC,21,267,10,8
+    LTEXT           "Ry",IDC_STATIC,92,268,10,8
+    LTEXT           "Rz",IDC_STATIC,159,268,9,8
+    CONTROL         "是否启用姿态约束",IDC_CHECK_USE_POSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,263,233,76,10
+    PUSHBUTTON      "预设姿态Rx=0°,Ry=250°,Rz=0°",IDC_BTN_SET_PRESET,250,263,114,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404B0"
+        BEGIN
+            VALUE "CompanyName", "TODO: <公司名>"
+            VALUE "FileDescription", "KongTan_8dianji"
+            VALUE "FileVersion", "1.0.0.1"
+            VALUE "InternalName", "KongTan_8dianji.exe"
+            VALUE "LegalCopyright", "TODO:  (C) <公司名>。  保留所有权利。"
+            VALUE "OriginalFilename", "KongTan_8dianji.exe"
+            VALUE "ProductName", "TODO: <产品名>"
+            VALUE "ProductVersion", "1.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 163
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    IDD_KONGTAN_8DIANJI_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 389
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 332
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_KONGTAN_8DIANJI_DIALOG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_ABOUTBOX            "关于 KongTan_8dianji(&A)..."
+END
+
+#endif    // 中文(简体，中国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE 4, 2
+#include "res\KongTan8dianji.rc2"  // 非 Microsoft Visual C++ 编辑的资源
+#include "l.CHS\afxres.rc"      // 标准组件
+#if !defined(_AFXDLL)
+#include "l.CHS\afxribbon.rc"   // MFC 功能区和控制条资源
+#endif
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

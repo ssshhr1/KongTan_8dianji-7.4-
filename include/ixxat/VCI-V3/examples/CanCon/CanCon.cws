@@ -1,0 +1,158 @@
+[Workspace Header]
+Version = 600
+Pathname = "/e/Projekte/_453_VCI3/LabWindows/examples/CanCon/CanCon.cws"
+CVI Dir = "/c/programme/national instruments/measurementstudio/cvi"
+VXIplug&play Framework Dir = "/C/VXIpnp/winnt"
+Number of Projects = 1
+Active Project = 1
+Project 0001 = "CanCon.prj"
+Drag Bar Left = 229
+Window Top = 27
+Window Left = 43
+Window Bottom = 676
+Window Right = 961
+Max Number Of Errors = 10
+Track Include File Dependencies = True
+Prompt For Missing Includes = True
+Stop On First Error File = False
+Bring Up Err Win For Warnings = True
+Show Build Dialog = False
+Save Changes Before Running = "Always"
+Hide Windows = False
+Global Hot Key = False
+Break At First Statement = False
+
+[Project Header 0001]
+Version = 600
+Platform Code = 4
+Sort Type = "No Sort"
+Build Configuration = "Debug"
+Warn User If Debugging Release = 1
+Batch Build Release = False
+Batch Build Debug = False
+
+[File 0001]
+Path = "/e/Projekte/_453_VCI3/LabWindows/examples/CanCon/CanCon.c"
+File Type = "CSource"
+Disk Date = 3272278791
+In Projects = "1,"
+Project Window Indexes = "12,"
+Window Top = 48
+Window Left = 18
+Source Window State = "1,0,0,0,0,0,0,0,0,80,0,0,0,0,0,25,0,0,0,0,"
+
+[File 0002]
+Path = "/e/Projekte/_453_VCI3/LabWindows/common/vcinpldynl.c"
+File Type = "CSource"
+Disk Date = 3273645625
+In Projects = "1,"
+Project Window Indexes = "1,"
+Source Window State = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
+
+[File 0003]
+Path = "/e/Projekte/_453_VCI3/LabWindows/inc/baltype.h"
+File Type = "Include"
+Disk Date = 3267174788
+In Projects = "1,"
+Project Window Indexes = "2,"
+Source Window State = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
+
+[File 0004]
+Path = "/e/Projekte/_453_VCI3/LabWindows/inc/cantype.h"
+File Type = "Include"
+Disk Date = 3267174788
+In Projects = "1,"
+Project Window Indexes = "3,"
+Source Window State = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
+
+[File 0005]
+Path = "/e/Projekte/_453_VCI3/LabWindows/inc/lintype.h"
+File Type = "Include"
+Disk Date = 3248877086
+In Projects = "1,"
+Project Window Indexes = "4,"
+Source Window State = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
+
+[File 0006]
+Path = "/e/Projekte/_453_VCI3/LabWindows/inc/predef.h"
+File Type = "Include"
+Disk Date = 3276066826
+In Projects = "1,"
+Project Window Indexes = "5,"
+Source Window State = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
+
+[File 0007]
+Path = "/e/Projekte/_453_VCI3/LabWindows/inc/stdtype.h"
+File Type = "Include"
+Disk Date = 3276070317
+In Projects = "1,"
+Project Window Indexes = "6,"
+Source Window State = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
+
+[File 0008]
+Path = "/e/Projekte/_453_VCI3/LabWindows/inc/vcierr.h"
+File Type = "Include"
+Disk Date = 3252671554
+In Projects = "1,"
+Project Window Indexes = "7,"
+Source Window State = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
+
+[File 0009]
+Path = "/e/Projekte/_453_VCI3/LabWindows/inc/vcinpl.h"
+File Type = "Include"
+Disk Date = 3267174788
+In Projects = "1,"
+Project Window Indexes = "8,"
+Source Window State = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
+
+[File 0010]
+Path = "/e/Projekte/_453_VCI3/LabWindows/inc/vcinpldynl.h"
+File Type = "Include"
+Disk Date = 3273645829
+In Projects = "1,"
+Project Window Indexes = "9,"
+Source Window State = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
+
+[File 0011]
+Path = "/e/Projekte/_453_VCI3/LabWindows/inc/vcisdk.h"
+File Type = "Include"
+Disk Date = 3276065452
+In Projects = "1,"
+Project Window Indexes = "10,"
+Source Window State = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
+
+[File 0012]
+Path = "/e/Projekte/_453_VCI3/LabWindows/inc/vcitype.h"
+File Type = "Include"
+Disk Date = 3276063099
+In Projects = "1,"
+Project Window Indexes = "11,"
+Source Window State = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
+
+[Build Options 0001]
+Generate Browse Info = True
+Enable Uninitialized Locals Runtime Warning = True
+Debugging Level = "Standard"
+Break On Library Errors = True
+Break On First Chance Exceptions = False
+
+[SCC Options 0001]
+Use global settings = True
+SCC Provider = ""
+SCC Project = ""
+Local Path = ""
+Auxiliary Path = ""
+Perform Same Action For .h File As For .uir File = "Ask"
+Username = ""
+Comment = ""
+Use Default Username = False
+Use Default Comment = False
+Do Not Include PRJ File in Actions = False
+Suppress CVI Error Messages = False
+
+[DLL Debugging Support 0001]
+External Process Path = ""
+
+[Command Line Args 0001]
+Command Line Args = ""
+
