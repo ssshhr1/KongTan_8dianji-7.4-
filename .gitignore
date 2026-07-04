@@ -26,3 +26,6 @@ test_write.py
 
 # packages
 packages/
+
+# VS user settings
+.vs/
