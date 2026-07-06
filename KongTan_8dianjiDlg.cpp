@@ -83,6 +83,10 @@ CKongTan8dianjiDlg::CKongTan8dianjiDlg(CWnd* pParent /*=nullptr*/)
 	, m_accelSteps(3)
 	, m_loadThreshold(0.0)
 	, m_direction(-1)
+	, m_linearStartX(0.0)
+	, m_linearStartY(0.0)
+	, m_linearStartZ(0.0)
+	, m_linearSteps(10)
 
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -115,6 +119,10 @@ void CKongTan8dianjiDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PITCH, m_theta_y);
 	DDX_Text(pDX, IDC_EDIT_YAW, m_theta_z);
 	DDX_Check(pDX, IDC_CHECK_USE_POSE, m_usePose);
+	DDX_Text(pDX, IDC_EDIT_LINEAR_START_X, m_linearStartX);
+	DDX_Text(pDX, IDC_EDIT_LINEAR_START_Y, m_linearStartY);
+	DDX_Text(pDX, IDC_EDIT_LINEAR_START_Z, m_linearStartZ);
+	DDX_Text(pDX, IDC_EDIT_LINEAR_STEPS, m_linearSteps);
 }
 
 BEGIN_MESSAGE_MAP(CKongTan8dianjiDlg, CDialogEx)
@@ -140,6 +148,7 @@ BEGIN_MESSAGE_MAP(CKongTan8dianjiDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_IK_SOLVE, &CKongTan8dianjiDlg::OnBnClickedBtnIkSolve)
 	ON_BN_CLICKED(IDC_BTN_PROPORTIONAL_HOOK, &CKongTan8dianjiDlg::OnBnClickedBtnProportionalHook)
 	ON_BN_CLICKED(IDC_BTN_SET_PRESET, &CKongTan8dianjiDlg::OnBnClickedBtnSetPreset)
+	ON_BN_CLICKED(IDC_BTN_LINEAR_MOTION, &CKongTan8dianjiDlg::OnBnClickedBtnLinearMotion)
 END_MESSAGE_MAP()
 
 // 初始化电机软限位配置
@@ -1236,4 +1245,96 @@ bool CKongTan8dianjiDlg::ComputeDeltasFromPosition(double target_x, double targe
 	double k3 = best_q(2), k4 = best_q(3), plane = best_q(4);
 	ComputeMotorDeltas(k3, k4, plane, delta1, delta2, delta3, delta4, delta5, delta6);
 	return true;
+}
+
+void CKongTan8dianjiDlg::ExecuteIncrementalMotion(double d1, double d2, double d3, double d4, double d5, double d6)
+{
+	struct MotorInfo { int id; double dist; double speed; };
+	std::vector<MotorInfo> motors;
+	double maxDist = 0.0;
+	int motorIds[] = { 1, 2, 3, 4, 5, 6 };
+	double deltas[] = { d1, d2, d3, d4, d5, d6 };
+
+	for (int i = 0; i < 6; i++)
+	{
+		int id = motorIds[i];
+		if (MotorIds.find(id) == MotorIds.end()) continue;
+		double dist = std::abs(deltas[i]);
+		if (dist < 0.1) continue;
+		if (dist > maxDist) maxDist = dist;
+		motors.push_back({ id, dist, 0.0 });
+	}
+
+	if (motors.empty() || maxDist < 0.1) return;
+
+	for (auto& m : motors)
+	{
+		double startupSpeed = GetStartupSpeed(m.id) * m_resetSpeedRatio;
+		m.speed = startupSpeed * (m.dist / maxDist);
+		if (m.speed < 2000.0) m.speed = 2000.0;
+		m_motorCtrl.SetMotorVelocity(m.id, m.speed, 200000.0, 200000.0);
+	}
+
+	for (int i = 0; i < 6; i++)
+	{
+		int id = motorIds[i];
+		if (MotorIds.find(id) == MotorIds.end()) continue;
+		MotorMoveRel(id, deltas[i]);
+	}
+
+	for (auto& m : motors)
+	{
+		double timeoutMs = (std::max)(m.dist / (m.speed + 1.0) * 2.0 * 1000.0, 5000.0);
+		if (timeoutMs > 60000.0) timeoutMs = 60000.0;
+		m_motorCtrl.WaitMoveDone(m.id, (float)timeoutMs);
+	}
+}
+
+void CKongTan8dianjiDlg::OnBnClickedBtnLinearMotion()
+{
+	UpdateData(TRUE);
+
+	double startX = m_linearStartX, startY = m_linearStartY, startZ = m_linearStartZ;
+	double endX = m_ikX, endY = m_ikY, endZ = m_ikZ;
+	int steps = (std::max)(2, (std::min)(100, m_linearSteps));
+	double wr = m_usePose ? 0.01 : 0.0;
+
+	// Pre-compute IK deltas for all interpolation points (validate trajectory first)
+	struct StepDeltas { double d[6]; };
+	std::vector<StepDeltas> traj;
+	traj.reserve(steps);
+
+	for (int i = 1; i <= steps; i++)
+	{
+		double t = (double)i / steps;
+		double x = startX + t * (endX - startX);
+		double y = startY + t * (endY - startY);
+		double z = startZ + t * (endZ - startZ);
+
+		StepDeltas s;
+		if (!ComputeDeltasFromPosition(x, y, z, m_theta_x, m_theta_y, m_theta_z, wr,
+			s.d[0], s.d[1], s.d[2], s.d[3], s.d[4], s.d[5]))
+		{
+			CString msg;
+			msg.Format(_T("直线运动 IK 失败于第 %d 步 (%.1f, %.1f, %.1f)"), i, x, y, z);
+			MessageBox(msg, _T("直线运动"), MB_ICONWARNING);
+			return;
+		}
+		traj.push_back(s);
+	}
+
+	// Execute incremental motions along the trajectory
+	double prev[6] = { 0, 0, 0, 0, 0, 0 };
+	for (const auto& s : traj)
+	{
+		ExecuteIncrementalMotion(
+			s.d[0] - prev[0], s.d[1] - prev[1], s.d[2] - prev[2],
+			s.d[3] - prev[3], s.d[4] - prev[4], s.d[5] - prev[5]);
+
+		for (int j = 0; j < 6; j++) prev[j] = s.d[j];
+	}
+
+	MessageBox(_T("直线运动完成！"), _T("提示"), MB_ICONINFORMATION);
+	TRACE(_T("直线运动: (%.1f,%.1f,%.1f) -> (%.1f,%.1f,%.1f), %d 步\n"),
+		startX, startY, startZ, endX, endY, endZ, steps);
 }

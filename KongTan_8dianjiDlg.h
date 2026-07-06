@@ -74,6 +74,9 @@ protected:
 	double m_loadThreshold;     // 负载阈值，0=禁用 (默认0)
 	int m_direction;            // 电机方向系数: 1=正向, -1=全部反转
 
+	double m_linearStartX, m_linearStartY, m_linearStartZ;
+	int m_linearSteps;
+
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
@@ -100,6 +103,7 @@ public:
 	afx_msg void OnEnChangeEdit9();
 	afx_msg void OnBnClickedBtnProportionalHook();
 	afx_msg void OnBnClickedBtnSetPreset();
+	afx_msg void OnBnClickedBtnLinearMotion();
 	bool ComputeDeltasFromPosition(double target_x, double target_y, double target_z,
 		double theta_x_deg, double theta_y_deg, double theta_z_deg,
 		double wr,
@@ -108,5 +112,6 @@ public:
 	// 辅助方法：复位速度比例调节 + 梯形加减速（同时启停、同时到达）
 	double GetStartupSpeed(int motorID);
 	void SyncedTrapezoidalReset(const std::vector<int>& motorIDs);
+	void ExecuteIncrementalMotion(double d1, double d2, double d3, double d4, double d5, double d6);
 	bool MotorMoveRel(int motorID, double movects) { return m_motorCtrl.MotorMoveRel(motorID, m_direction * movects); }
 };
