@@ -140,6 +140,7 @@ BEGIN_MESSAGE_MAP(CKongTan8dianjiDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_IK_SOLVE, &CKongTan8dianjiDlg::OnBnClickedBtnIkSolve)
 	ON_BN_CLICKED(IDC_BTN_PROPORTIONAL_HOOK, &CKongTan8dianjiDlg::OnBnClickedBtnProportionalHook)
 	ON_BN_CLICKED(IDC_BTN_SET_PRESET, &CKongTan8dianjiDlg::OnBnClickedBtnSetPreset)
+	ON_BN_CLICKED(IDC_BTN_LINEAR_TRAJECTORY, &CKongTan8dianjiDlg::OnBnClickedBtnLinearTrajectory)
 END_MESSAGE_MAP()
 
 // 初始化电机软限位配置
@@ -1169,6 +1170,116 @@ void CKongTan8dianjiDlg::OnBnClickedBtnSetPreset()
 	UpdateData(FALSE);   // 刷新界面显示
 
 	TRACE(_T("Preset pose set: Rx=%.1f, Ry=%.1f, Rz=%.1f\n"), m_theta_x, m_theta_y, m_theta_z);
+}
+
+void CKongTan8dianjiDlg::ExecuteLinearTrajectory(
+	double start_x, double start_y, double start_z,
+	double end_x, double end_y, double end_z,
+	int num_steps,
+	double theta_x_deg, double theta_y_deg, double theta_z_deg,
+	double wr)
+{
+	if (num_steps < 2) return;
+
+	// Step 1: compute IK for each trajectory point, store absolute motor deltas
+	std::vector<double> delta_abs[6];
+	for (int k = 0; k < 6; k++) delta_abs[k].resize(num_steps, 0.0);
+
+	for (int i = 0; i < num_steps; i++)
+	{
+		double t = (double)i / (num_steps - 1);
+		double px = start_x + t * (end_x - start_x);
+		double py = start_y + t * (end_y - start_y);
+		double pz = start_z + t * (end_z - start_z);
+
+		double d1, d2, d3, d4, d5, d6;
+		if (!ComputeDeltasFromPosition(px, py, pz, theta_x_deg, theta_y_deg, theta_z_deg, wr, d1, d2, d3, d4, d5, d6))
+		{
+			CString msg;
+			msg.Format(_T("轨迹点 %d (%.1f, %.1f, %.1f) 逆解失败"), i, px, py, pz);
+			MessageBox(msg, _T("轨迹错误"), MB_ICONERROR);
+			return;
+		}
+		delta_abs[0][i] = d1; delta_abs[1][i] = d2; delta_abs[2][i] = d3;
+		delta_abs[3][i] = d4; delta_abs[4][i] = d5; delta_abs[5][i] = d6;
+	}
+
+	// Step 2: execute incrementally — first point moves from zero, rest are incremental
+	int motorIds[] = { 1, 2, 3, 4, 5, 6 };
+
+	for (int i = 0; i < num_steps; i++)
+	{
+		double move[6];
+		if (i == 0) {
+			for (int k = 0; k < 6; k++) move[k] = delta_abs[k][0];
+		}
+		else {
+			for (int k = 0; k < 6; k++) move[k] = delta_abs[k][i] - delta_abs[k][i - 1];
+		}
+
+		// find max distance for speed scaling
+		double maxDist = 0.0;
+		for (int k = 0; k < 6; k++) {
+			if (std::abs(move[k]) > maxDist) maxDist = std::abs(move[k]);
+		}
+		if (maxDist < 0.5) continue;
+
+		// set speeds proportional to distance
+		for (int k = 0; k < 6; k++) {
+			int id = motorIds[k];
+			if (MotorIds.find(id) == MotorIds.end()) continue;
+			double dist = std::abs(move[k]);
+			if (dist < 0.5) continue;
+			double speed = GetStartupSpeed(id) * m_resetSpeedRatio * (dist / maxDist);
+			if (speed < 2000.0) speed = 2000.0;
+			m_motorCtrl.SetMotorVelocity(id, speed, 200000, 200000);
+		}
+
+		// send relative move commands
+		for (int k = 0; k < 6; k++) {
+			int id = motorIds[k];
+			if (MotorIds.find(id) == MotorIds.end()) continue;
+			if (std::abs(move[k]) < 0.5) continue;
+			MotorMoveRel(id, move[k]);
+		}
+
+		// wait for completion
+		for (int k = 0; k < 6; k++) {
+			int id = motorIds[k];
+			if (MotorIds.find(id) == MotorIds.end()) continue;
+			double dist = std::abs(move[k]);
+			if (dist < 0.5) continue;
+			double speed = GetStartupSpeed(id) * m_resetSpeedRatio * (dist / maxDist);
+			if (speed < 2000.0) speed = 2000.0;
+			double timeoutMs = (std::max)(dist / (speed + 1.0) * 2.0 * 1000.0, 5000.0);
+			if (timeoutMs > 60000.0) timeoutMs = 60000.0;
+			m_motorCtrl.WaitMoveDone(id, (float)timeoutMs);
+		}
+	}
+
+	TRACE(_T("线性轨迹执行完成: (%.1f,%.1f,%.1f) -> (%.1f,%.1f,%.1f), %d steps\n"),
+		start_x, start_y, start_z, end_x, end_y, end_z, num_steps);
+	MessageBox(_T("连续直线轨迹执行完成！"), _T("提示"), MB_ICONINFORMATION);
+}
+
+void CKongTan8dianjiDlg::OnBnClickedBtnLinearTrajectory()
+{
+	// 预设参数：起点(52,0,65) -> 终点(32,0,65)，10个采样点，姿态为0
+	// 先复位到零位
+	std::vector<int> allIDs;
+	for (const CML::uint& id : MotorIds)
+	{
+		if (m_motorZeroPos.find(id) != m_motorZeroPos.end())
+			allIDs.push_back((int)id);
+	}
+	SyncedTrapezoidalReset(allIDs);
+
+	ExecuteLinearTrajectory(
+		52.0, 0.0, 65.0,     // start
+		32.0, 0.0, 65.0,     // end
+		11,                    // steps (10 segments = 11 points)
+		0.0, 0.0, 0.0,       // theta_x, theta_y, theta_z
+		0.0);                 // wr (no pose constraint)
 }
 
 void CKongTan8dianjiDlg::OnEnChangeEdit9()

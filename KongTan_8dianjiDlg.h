@@ -100,6 +100,10 @@ public:
 	afx_msg void OnEnChangeEdit9();
 	afx_msg void OnBnClickedBtnProportionalHook();
 	afx_msg void OnBnClickedBtnSetPreset();
+	afx_msg void OnBnClickedBtnLinearTrajectory();
+	void ExecuteLinearTrajectory(double start_x, double start_y, double start_z,
+		double end_x, double end_y, double end_z, int num_steps,
+		double theta_x_deg, double theta_y_deg, double theta_z_deg, double wr);
 	bool ComputeDeltasFromPosition(double target_x, double target_y, double target_z,
 		double theta_x_deg, double theta_y_deg, double theta_z_deg,
 		double wr,
