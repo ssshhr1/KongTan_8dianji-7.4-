@@ -17,7 +17,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½å£¬ï¿½Ð¹ï¿½) resources
+// ÖÐÎÄ(¼òÌå£¬ÖÐ¹ú) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
@@ -53,10 +53,10 @@ BEGIN
     "\r\n"
     "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
     "LANGUAGE 4, 2\r\n"
-    "#include ""res\\KongTan8dianji.rc2""  // ï¿½ï¿½ Microsoft Visual C++ ï¿½à¼­ï¿½ï¿½ï¿½ï¿½Ô´\r\n"
-    "#include ""l.CHS\\afxres.rc""      // ï¿½ï¿½×¼ï¿½ï¿½ï¿½\r\n"
+    "#include ""res\\KongTan8dianji.rc2""  // ·Ç Microsoft Visual C++ ±à¼­µÄ×ÊÔ´\r\n"
+    "#include ""l.CHS\\afxres.rc""      // ±ê×¼×é¼þ\r\n"
     "#if !defined(_AFXDLL)\r\n"
-    "#include ""l.CHS\\afxribbon.rc""   // MFC ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´\r\n"
+    "#include ""l.CHS\\afxribbon.rc""   // MFC ¹¦ÄÜÇøºÍ¿ØÖÆÌõ×ÊÔ´\r\n"
     "#endif\r\n"
     "#endif\r\n"
     "\0"
@@ -82,101 +82,91 @@ IDR_MAINFRAME           ICON                    "res\\KongTan_8dianji.ico"
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "ï¿½ï¿½ï¿½ï¿½ KongTan_8dianji"
+CAPTION "¹ØÓÚ KongTan_8dianji"
 FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,21,20
-    LTEXT           "KongTan_8dianjiï¿½ï¿½ï¿½æ±¾ 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
-    LTEXT           "ï¿½ï¿½È¨ï¿½ï¿½ï¿½ï¿½ (C) 2026",IDC_STATIC,42,26,114,8
-    DEFPUSHBUTTON   "È·ï¿½ï¿½",IDOK,113,41,50,14,WS_GROUP
+    LTEXT           "KongTan_8dianji£¬°æ±¾ 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "°æÈ¨ËùÓÐ (C) 2026",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "È·¶¨",IDOK,113,41,50,14,WS_GROUP
 END
 
-IDD_KONGTAN_8DIANJI_DIALOG DIALOGEX 0, 0, 396, 396
+IDD_KONGTAN_8DIANJI_DIALOG DIALOGEX 0, 0, 396, 336
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 EXSTYLE WS_EX_APPWINDOW
-CAPTION "ï¿½ï¿½Ì½ï¿½ï¿½ï¿½-8ï¿½ï¿½ï¿½"
+CAPTION "¿×Ì½¼ì²â-8µç»ú"
 FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     EDITTEXT        IDC_EDIT1,28,29,40,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT2,28,62,40,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT3,29,113,41,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT4,27,165,40,14,ES_AUTOHSCROLL
-    PUSHBUTTON      "S1-ï¿½ï¿½",IDC_BUTTON1,162,29,50,14
-    PUSHBUTTON      "S1-ï¿½ï¿½",IDC_BUTTON2,239,29,50,14
-    PUSHBUTTON      "S1-ï¿½ï¿½ï¿½Â¸ï¿½Î»",IDC_BUTTON3,316,29,50,14
-    PUSHBUTTON      "S1-ï¿½ï¿½",IDC_BUTTON4,162,62,50,14
-    PUSHBUTTON      "S1-ï¿½ï¿½",IDC_BUTTON5,239,62,50,14
-    PUSHBUTTON      "S1-ï¿½ï¿½ï¿½Ò¸ï¿½Î»",IDC_BUTTON6,316,62,50,14
-    PUSHBUTTON      "S2-ï¿½ï¿½",IDC_BUTTON7,162,113,50,14
-    PUSHBUTTON      "S2-ï¿½ï¿½",IDC_BUTTON8,238,113,50,14
-    PUSHBUTTON      "S2-ï¿½ï¿½Î»",IDC_BUTTON9,314,113,50,14
-    PUSHBUTTON      "S3-ï¿½ï¿½",IDC_BUTTON10,161,165,50,14
-    PUSHBUTTON      "S3-ï¿½ï¿½",IDC_BUTTON11,238,165,50,14
-    PUSHBUTTON      "S3-ï¿½ï¿½Î»",IDC_BUTTON12,315,165,50,14
+    PUSHBUTTON      "S1-ÉÏ",IDC_BUTTON1,162,29,50,14
+    PUSHBUTTON      "S1-ÏÂ",IDC_BUTTON2,239,29,50,14
+    PUSHBUTTON      "S1-ÉÏÏÂ¸´Î»",IDC_BUTTON3,316,29,50,14
+    PUSHBUTTON      "S1-×ó",IDC_BUTTON4,162,62,50,14
+    PUSHBUTTON      "S1-ÓÒ",IDC_BUTTON5,239,62,50,14
+    PUSHBUTTON      "S1-×óÓÒ¸´Î»",IDC_BUTTON6,316,62,50,14
+    PUSHBUTTON      "S2-¹´",IDC_BUTTON7,162,113,50,14
+    PUSHBUTTON      "S2-»Ø",IDC_BUTTON8,238,113,50,14
+    PUSHBUTTON      "S2-¸´Î»",IDC_BUTTON9,314,113,50,14
+    PUSHBUTTON      "S3-¸©",IDC_BUTTON10,161,165,50,14
+    PUSHBUTTON      "S3-Ñö",IDC_BUTTON11,238,165,50,14
+    PUSHBUTTON      "S3-¸´Î»",IDC_BUTTON12,315,165,50,14
     EDITTEXT        IDC_EDIT5,95,29,40,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT6,95,62,40,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT7,96,113,40,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT8,94,165,40,14,ES_AUTOHSCROLL
-    GROUPBOX        "ï¿½ï¿½Ò»ï¿½ï¿½",IDC_STATIC,16,7,361,75
-    GROUPBOX        "ï¿½Ú¶ï¿½ï¿½ï¿½",IDC_STATIC,16,89,361,45
-    GROUPBOX        "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",IDC_STATIC,16,141,361,43
-    LTEXT           "ï¿½Ù¶ï¿½",IDC_STATIC,41,18,15,8
-    LTEXT           "Î»ï¿½ï¿½",IDC_STATIC,107,17,15,8
-    LTEXT           "ï¿½Ù¶ï¿½",IDC_STATIC,41,49,15,8
-    LTEXT           "Î»ï¿½ï¿½",IDC_STATIC,107,49,15,8
-    LTEXT           "ï¿½Ù¶ï¿½",IDC_STATIC,42,102,15,8
-    LTEXT           "Î»ï¿½ï¿½",IDC_STATIC,108,102,15,8
-    LTEXT           "ï¿½Ù¶ï¿½",IDC_STATIC,40,153,15,8
-    LTEXT           "Î»ï¿½ï¿½",IDC_STATIC,106,153,15,8
-    GROUPBOX        "ï¿½ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½",IDC_STATIC,16,188,361,32
-    LTEXT           "ï¿½ï¿½3(ï¿½ï¿½)",IDC_STATIC,24,200,24,8
+    GROUPBOX        "µÚÒ»¶Î",IDC_STATIC,16,7,361,75
+    GROUPBOX        "µÚ¶þ¶Î",IDC_STATIC,16,89,361,45
+    GROUPBOX        "µÚÈý¶Î",IDC_STATIC,16,141,361,43
+    LTEXT           "ËÙ¶È",IDC_STATIC,41,18,15,8
+    LTEXT           "Î»ÒÆ",IDC_STATIC,107,17,15,8
+    LTEXT           "ËÙ¶È",IDC_STATIC,41,49,15,8
+    LTEXT           "Î»ÒÆ",IDC_STATIC,107,49,15,8
+    LTEXT           "ËÙ¶È",IDC_STATIC,42,102,15,8
+    LTEXT           "Î»ÒÆ",IDC_STATIC,108,102,15,8
+    LTEXT           "ËÙ¶È",IDC_STATIC,40,153,15,8
+    LTEXT           "Î»ÒÆ",IDC_STATIC,106,153,15,8
+    GROUPBOX        "ÍäÇú½Ç¶È",IDC_STATIC,16,188,361,32
+    LTEXT           "¦È3(¶È)",IDC_STATIC,24,200,24,8
     EDITTEXT        IDC_EDIT_BEND3,50,198,36,14,ES_AUTOHSCROLL
-    LTEXT           "ï¿½ï¿½4(ï¿½ï¿½)",IDC_STATIC,96,200,24,8
+    LTEXT           "¦È4(¶È)",IDC_STATIC,96,200,24,8
     EDITTEXT        IDC_EDIT_BEND4,122,198,36,14,ES_AUTOHSCROLL
-    LTEXT           "Æ½ï¿½ï¿½Ç¦ï¿½",IDC_STATIC,168,200,28,8
+    LTEXT           "Æ½Ãæ½Ç¦Õ",IDC_STATIC,168,200,28,8
     EDITTEXT        IDC_EDIT_PLANE,200,198,36,14,ES_AUTOHSCROLL
-    PUSHBUTTON      "Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",IDC_BTN_EXECUTE_BENDING,248,198,56,14
-    GROUPBOX        "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",IDC_STATIC,16,223,361,89
+    PUSHBUTTON      "Ö´ÐÐÍäÇú",IDC_BTN_EXECUTE_BENDING,248,198,56,14
+    GROUPBOX        "Äæ½âÇý¶¯",IDC_STATIC,16,223,361,89
     EDITTEXT        IDC_EDIT_IK_X,43,233,40,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_IK_Z,112,232,40,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_IK_Y,180,232,40,14,ES_AUTOHSCROLL
-    PUSHBUTTON      "Ö´ï¿½ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½Ñ§ï¿½ï¿½â²¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",IDC_BTN_IK_SOLVE,258,246,106,14
-    LTEXT           "X ï¿½ï¿½ï¿½ï¿½",IDC_STATIC,20,238,23,8
-    LTEXT           "Zï¿½ï¿½ï¿½ï¿½",IDC_STATIC,90,238,20,8
-    LTEXT           "Y ï¿½ï¿½ï¿½ï¿½",IDC_STATIC,155,238,25,8
+    PUSHBUTTON      "Ö´ÐÐÄæÔË¶¯Ñ§Çó½â²¢Çý¶¯µç»ú",IDC_BTN_IK_SOLVE,258,246,106,14
+    LTEXT           "X ×ø±ê",IDC_STATIC,20,238,23,8
+    LTEXT           "Z×ø±ê",IDC_STATIC,90,238,20,8
+    LTEXT           "Y ×ø±ê",IDC_STATIC,155,238,25,8
     EDITTEXT        IDC_EDIT9,28,297,40,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT10,86,297,40,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT11,142,296,40,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT12,198,296,40,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT13,254,296,40,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT14,313,296,40,14,ES_AUTOHSCROLL
-    LTEXT           "ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½1",IDC_STATIC,24,286,54,8
-    LTEXT           " ï¿½ï¿½2",IDC_STATIC,101,286,12,8
-    LTEXT           " ï¿½ï¿½3",IDC_STATIC,159,286,12,8
-    LTEXT           " ï¿½ï¿½4",IDC_STATIC,214,286,12,8
-    LTEXT           " ï¿½ï¿½5",IDC_STATIC,268,286,12,8
-    LTEXT           " ï¿½ï¿½6",IDC_STATIC,326,286,12,8
-    PUSHBUTTON      "È«ï¿½ï¿½ï¿½ï¿½Î»",IDC_BUTTON13,60,374,50,14
-    PUSHBUTTON      "ï¿½Ë³ï¿½",IDCCANCEL,284,374,50,14
-    PUSHBUTTON      "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",IDC_BTN_PROPORTIONAL_HOOK,160,374,56,14
-    GROUPBOX        "Ö±ï¿½ï¿½ï¿½Ë¶ï¿½",IDC_STATIC,16,316,361,52
-    LTEXT           "ï¿½ï¿½ï¿½ X",IDC_STATIC,22,330,20,8
-    EDITTEXT        IDC_EDIT_LINEAR_START_X,44,328,35,14,ES_AUTOHSCROLL
-    LTEXT           "Y",IDC_STATIC,84,330,8,8
-    EDITTEXT        IDC_EDIT_LINEAR_START_Y,94,328,35,14,ES_AUTOHSCROLL
-    LTEXT           "Z",IDC_STATIC,134,330,8,8
-    EDITTEXT        IDC_EDIT_LINEAR_START_Z,144,328,35,14,ES_AUTOHSCROLL
-    LTEXT           "ï¿½ï¿½ï¿½ï¿½",IDC_STATIC,192,330,16,8
-    EDITTEXT        IDC_EDIT_LINEAR_STEPS,210,328,30,14,ES_AUTOHSCROLL
-    PUSHBUTTON      "Ö´ï¿½ï¿½Ö±ï¿½ï¿½ï¿½Ë¶ï¿½",IDC_BTN_LINEAR_MOTION,252,328,75,14
+    LTEXT           "µç»ú1ÍÆÀ­Á¿ ¦¤1",IDC_STATIC,24,286,54,8
+    LTEXT           " ¦¤2",IDC_STATIC,101,286,12,8
+    LTEXT           " ¦¤3",IDC_STATIC,159,286,12,8
+    LTEXT           " ¦¤4",IDC_STATIC,214,286,12,8
+    LTEXT           " ¦¤5",IDC_STATIC,268,286,12,8
+    LTEXT           " ¦¤6",IDC_STATIC,326,286,12,8
+    PUSHBUTTON      "È«²¿¸´Î»",IDC_BUTTON13,60,318,50,14
+    PUSHBUTTON      "ÍË³ö",IDCCANCEL,284,318,50,14
+    PUSHBUTTON      "±ÈÀýµ÷ËÙ",IDC_BTN_PROPORTIONAL_HOOK,160,318,56,14
     EDITTEXT        IDC_EDIT_ROLL,43,263,40,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_PITCH,113,263,40,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_YAW,180,263,40,14,ES_AUTOHSCROLL
     LTEXT           "Rx",IDC_STATIC,21,267,10,8
     LTEXT           "Ry",IDC_STATIC,92,268,10,8
     LTEXT           "Rz",IDC_STATIC,159,268,9,8
-    CONTROL         "ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¬Ô¼ï¿½ï¿½",IDC_CHECK_USE_POSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,263,233,76,10
-    PUSHBUTTON      "Ô¤ï¿½ï¿½ï¿½ï¿½Ì¬Rx=0ï¿½ï¿½,Ry=250ï¿½ï¿½,Rz=0ï¿½ï¿½",IDC_BTN_SET_PRESET,250,263,114,14
+    CONTROL         "ÊÇ·ñÆôÓÃ×ËÌ¬Ô¼Êø",IDC_CHECK_USE_POSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,263,233,76,10
+    PUSHBUTTON      "Ô¤Éè×ËÌ¬Rx=0¡ã,Ry=250¡ã,Rz=0¡ã",IDC_BTN_SET_PRESET,250,263,114,14
 END
 
 
@@ -202,13 +192,13 @@ BEGIN
     BEGIN
         BLOCK "080404B0"
         BEGIN
-            VALUE "CompanyName", "TODO: <ï¿½ï¿½Ë¾ï¿½ï¿½>"
+            VALUE "CompanyName", "TODO: <¹«Ë¾Ãû>"
             VALUE "FileDescription", "KongTan_8dianji"
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "KongTan_8dianji.exe"
-            VALUE "LegalCopyright", "TODO:  (C) <ï¿½ï¿½Ë¾ï¿½ï¿½>ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¨ï¿½ï¿½ï¿½ï¿½"
+            VALUE "LegalCopyright", "TODO:  (C) <¹«Ë¾Ãû>¡£  ±£ÁôËùÓÐÈ¨Àû¡£"
             VALUE "OriginalFilename", "KongTan_8dianji.exe"
-            VALUE "ProductName", "TODO: <ï¿½ï¿½Æ·ï¿½ï¿½>"
+            VALUE "ProductName", "TODO: <²úÆ·Ãû>"
             VALUE "ProductVersion", "1.0.0.1"
         END
     END
@@ -240,7 +230,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 389
         TOPMARGIN, 7
-        BOTTOMMARGIN, 392
+        BOTTOMMARGIN, 332
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -264,10 +254,10 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_ABOUTBOX            "ï¿½ï¿½ï¿½ï¿½ KongTan_8dianji(&A)..."
+    IDS_ABOUTBOX            "¹ØÓÚ KongTan_8dianji(&A)..."
 END
 
-#endif    // ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½å£¬ï¿½Ð¹ï¿½) resources
+#endif    // ÖÐÎÄ(¼òÌå£¬ÖÐ¹ú) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -284,10 +274,10 @@ END
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE 4, 2
-#include "res\KongTan8dianji.rc2"  // ï¿½ï¿½ Microsoft Visual C++ ï¿½à¼­ï¿½ï¿½ï¿½ï¿½Ô´
-#include "l.CHS\afxres.rc"      // ï¿½ï¿½×¼ï¿½ï¿½ï¿½
+#include "res\KongTan8dianji.rc2"  // ·Ç Microsoft Visual C++ ±à¼­µÄ×ÊÔ´
+#include "l.CHS\afxres.rc"      // ±ê×¼×é¼þ
 #if !defined(_AFXDLL)
-#include "l.CHS\afxribbon.rc"   // MFC ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´
+#include "l.CHS\afxribbon.rc"   // MFC ¹¦ÄÜÇøºÍ¿ØÖÆÌõ×ÊÔ´
 #endif
 #endif
 
