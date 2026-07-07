@@ -383,125 +383,6 @@ void CKongTan8dianjiDlg::OnBnClickedButton2()  //S1-下
 	//TRACE(_T("S1-DOWN: Motor1 -%.0f, Motor2 +%.0f, Speed=%.0f\n"), motor_S12, motor_S12, motor_V12);
 }
 
-// ========== 辅助函数：复位速度比例调节 + 梯形加减速（同时启停、同时到达）==========
-
-double CKongTan8dianjiDlg::GetStartupSpeed(int motorID)
-{
-	switch (motorID)
-	{
-	case 1: case 2: return motor_V12;
-	case 3: case 4: return motor_V34;
-	case 5: case 6: return motor_V56;
-	case 7: case 8: return motor_V78;
-	default:  return 5000.0;  // 默认启动速度
-	}
-}
-
-void CKongTan8dianjiDlg::SyncedTrapezoidalReset(const std::vector<int>& motorIDs)
-{
-	if (motorIDs.empty()) return;
-
-	// ── 第1步：获取所有电机的当前位置和目标（零位）位置 ──
-	struct MotorInfo {
-		int id;
-		double currentPos;
-		double targetPos;
-		double distance;
-		double direction;    // +1 或 -1
-		double velocity;     // 按距离比例缩放后的目标速度
-		double accel;        // 按距离比例缩放后的加速度
-	};
-	std::vector<MotorInfo> motors;
-	double maxDist = 0.0;
-
-	for (int id : motorIDs)
-	{
-		if (MotorIds.find(id) == MotorIds.end()) continue;
-
-		MotorInfo m;
-		m.id = id;
-
-		// 获取当前实际位置
-		if (!m_motorCtrl.GetPositionActual(id, m.currentPos))
-		{
-			TRACE(_T("SyncedReset: 无法获取电机 %d 当前位置\n"), id);
-			continue;
-		}
-
-		// 获取零位
-		auto it = m_motorZeroPos.find(id);
-		if (it == m_motorZeroPos.end())
-		{
-			TRACE(_T("SyncedReset: 电机 %d 无零位记录\n"), id);
-			continue;
-		}
-		m.targetPos = it->second;
-		m.distance = std::abs(m.targetPos - m.currentPos);
-		m.direction = (m.targetPos > m.currentPos) ? 1.0 : -1.0;
-
-		if (m.distance > maxDist) maxDist = m.distance;
-		motors.push_back(m);
-	}
-
-	if (motors.empty() || maxDist < 1.0) return;  // 已在目标位置
-
-	// ── 第2步：按正比例计算速度，行程越大速度越大（同时启停，防钢丝拉断）──
-	// 所有电机同时到达，保证推拉同步
-	for (auto& m : motors)
-	{
-		double startupSpeed = GetStartupSpeed(m.id) * m_resetSpeedRatio;
-		double ratio = m.distance / maxDist;
-		m.velocity = startupSpeed * ratio;
-		if (m.velocity < 2000.0) m.velocity = 2000.0;
-		m.accel = 200000.0;
-	}
-
-	TRACE(_T("SyncedReset: %zu motors, maxDist=%.0f\n"), motors.size(), maxDist);
-
-	// ── 第3步：负载检测（如有配置）──
-	if (m_loadThreshold > 0.0)
-	{
-		for (auto& m : motors)
-		{
-			CML::int16 currentActual = m_motorCtrl.GetCurrentActual(m.id);
-			if (std::abs((double)currentActual) > m_loadThreshold)
-			{
-				m.velocity *= 0.5;
-				m.accel *= 0.5;
-			TRACE(_T("SyncedReset: 电机 %d 负载过高(current=%d), 降速到 %.0f\n"),
-				m.id, (int)currentActual, m.velocity);
-			}
-		}
-	}
-
-	// ── 第4步：先设置所有电机的运动参数（速度+加速度）──
-	// 分两个循环确保所有电机参数设置完毕后再统一启动
-	for (auto& m : motors)
-	{
-		m_motorCtrl.SetMotorVelocity(m.id, m.velocity, m.accel, m.accel);
-	}
-
-	// ── 第5步：再同时发出所有电机的绝对定位指令（确保同时启动）──
-	for (auto& m : motors)
-	{
-		m_motorCtrl.MotorMoveAbs(m.id, m.targetPos);
-	}
-
-	// ── 第6步：等待所有电机运动完成 ──
-	for (auto& m : motors)
-	{
-		double estTimeSec = m.distance / (m.velocity + 1.0);
-		double timeoutMs = (std::max)(estTimeSec * 2.0 * 1000.0, 5000.0);
-		if (timeoutMs > 60000.0) timeoutMs = 60000.0;
-
-		if (!m_motorCtrl.WaitMoveDone(m.id, (float)timeoutMs))
-		{
-			TRACE(_T("SyncedReset: 电机 %d WaitMoveDone 超时 (%.0f ms)\n"), m.id, timeoutMs);
-		}
-	}
-
-	TRACE(_T("SyncedReset: 所有电机复位完成\n"));
-}
 
 void CKongTan8dianjiDlg::OnBnClickedButton3()  //S1-上下复位
 {
@@ -767,6 +648,7 @@ void CKongTan8dianjiDlg::OnBnClickedButton13()  //全部复位
 	MessageBox(_T("所有电机正在复位！"), _T("提示"), MB_ICONINFORMATION);
 }
 
+
 void CKongTan8dianjiDlg::ComputeMotorDeltas(double kappa3, double kappa4, double plane_angle,
 	double& delta1, double& delta2, double& delta3,
 	double& delta4, double& delta5, double& delta6)
@@ -791,7 +673,7 @@ void CKongTan8dianjiDlg::ComputeMotorDeltas(double kappa3, double kappa4, double
 }
 void CKongTan8dianjiDlg::ExecuteBendingMotion(double bend_angle3_deg, double bend_angle4_deg, double plane_angle_deg)
 {
-	const double L3 = 11.0;
+	const double L3 = 11.0;      
 	const double L4 = 15.91;
 
 	// 角度转弧度
@@ -901,7 +783,125 @@ void CKongTan8dianjiDlg::OnBnClickedCcancel()  //退出
 	// 关闭对话框
 	CDialogEx::OnCancel();
 }
+// ========== 辅助函数：复位速度比例调节 + 梯形加减速（同时启停、同时到达）==========
 
+double CKongTan8dianjiDlg::GetStartupSpeed(int motorID)
+{
+	switch (motorID)
+	{
+	case 1: case 2: return motor_V12;
+	case 3: case 4: return motor_V34;
+	case 5: case 6: return motor_V56;
+	case 7: case 8: return motor_V78;
+	default:  return 5000.0;  // 默认启动速度
+	}
+}
+
+void CKongTan8dianjiDlg::SyncedTrapezoidalReset(const std::vector<int>& motorIDs)
+{
+	if (motorIDs.empty()) return;
+
+	// ── 第1步：获取所有电机的当前位置和目标（零位）位置 ──
+	struct MotorInfo {
+		int id;
+		double currentPos;
+		double targetPos;
+		double distance;
+		double direction;    // +1 或 -1
+		double velocity;     // 按距离比例缩放后的目标速度
+		double accel;        // 按距离比例缩放后的加速度
+	};
+	std::vector<MotorInfo> motors;
+	double maxDist = 0.0;
+
+	for (int id : motorIDs)
+	{
+		if (MotorIds.find(id) == MotorIds.end()) continue;
+
+		MotorInfo m;
+		m.id = id;
+
+		// 获取当前实际位置
+		if (!m_motorCtrl.GetPositionActual(id, m.currentPos))
+		{
+			TRACE(_T("SyncedReset: 无法获取电机 %d 当前位置\n"), id);
+			continue;
+		}
+
+		// 获取零位
+		auto it = m_motorZeroPos.find(id);
+		if (it == m_motorZeroPos.end())
+		{
+			TRACE(_T("SyncedReset: 电机 %d 无零位记录\n"), id);
+			continue;
+		}
+		m.targetPos = it->second;
+		m.distance = std::abs(m.targetPos - m.currentPos);
+		m.direction = (m.targetPos > m.currentPos) ? 1.0 : -1.0;
+
+		if (m.distance > maxDist) maxDist = m.distance;
+		motors.push_back(m);
+	}
+
+	if (motors.empty() || maxDist < 1.0) return;  // 已在目标位置
+
+	// ── 第2步：按正比例计算速度，行程越大速度越大（同时启停，防钢丝拉断）──
+	// 所有电机同时到达，保证推拉同步
+	for (auto& m : motors)
+	{
+		double startupSpeed = GetStartupSpeed(m.id) * m_resetSpeedRatio;
+		double ratio = m.distance / maxDist;
+		m.velocity = startupSpeed * ratio;
+		if (m.velocity < 2000.0) m.velocity = 2000.0;
+		m.accel = 200000.0;
+	}
+
+	TRACE(_T("SyncedReset: %zu motors, maxDist=%.0f\n"), motors.size(), maxDist);
+
+	// ── 第3步：负载检测（如有配置）──
+	if (m_loadThreshold > 0.0)
+	{
+		for (auto& m : motors)
+		{
+			CML::int16 currentActual = m_motorCtrl.GetCurrentActual(m.id);
+			if (std::abs((double)currentActual) > m_loadThreshold)
+			{
+				m.velocity *= 0.5;
+				m.accel *= 0.5;
+				TRACE(_T("SyncedReset: 电机 %d 负载过高(current=%d), 降速到 %.0f\n"),
+					m.id, (int)currentActual, m.velocity);
+			}
+		}
+	}
+
+	// ── 第4步：先设置所有电机的运动参数（速度+加速度）──
+	// 分两个循环确保所有电机参数设置完毕后再统一启动
+	for (auto& m : motors)
+	{
+		m_motorCtrl.SetMotorVelocity(m.id, m.velocity, m.accel, m.accel);
+	}
+
+	// ── 第5步：再同时发出所有电机的绝对定位指令（确保同时启动）──
+	for (auto& m : motors)
+	{
+		m_motorCtrl.MotorMoveAbs(m.id, m.targetPos);
+	}
+
+	// ── 第6步：等待所有电机运动完成 ──
+	for (auto& m : motors)
+	{
+		double estTimeSec = m.distance / (m.velocity + 1.0);
+		double timeoutMs = (std::max)(estTimeSec * 2.0 * 1000.0, 5000.0);
+		if (timeoutMs > 60000.0) timeoutMs = 60000.0;
+
+		if (!m_motorCtrl.WaitMoveDone(m.id, (float)timeoutMs))
+		{
+			TRACE(_T("SyncedReset: 电机 %d WaitMoveDone 超时 (%.0f ms)\n"), m.id, timeoutMs);
+		}
+	}
+
+	TRACE(_T("SyncedReset: 所有电机复位完成\n"));
+}
 // ========== 运动学辅助函数实现 ==========
 Matrix3d CKongTan8dianjiDlg::Rx(double a) {
 	Matrix3d R;
@@ -1275,8 +1275,8 @@ void CKongTan8dianjiDlg::OnBnClickedBtnLinearTrajectory()
 	SyncedTrapezoidalReset(allIDs);
 
 	ExecuteLinearTrajectory(
-		52.0, 0.0, 65.0,     // start
-		32.0, 0.0, 65.0,     // end
+		52.0, 0.0, 85.0,     // start
+		32.0, 0.0, 85.0,     // end
 		11,                    // steps (10 segments = 11 points)
 		0.0, 0.0, 0.0,       // theta_x, theta_y, theta_z
 		0.0);                 // wr (no pose constraint)
