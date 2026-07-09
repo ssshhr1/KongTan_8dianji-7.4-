@@ -79,6 +79,10 @@ CKongTan8dianjiDlg::CKongTan8dianjiDlg(CWnd* pParent /*=nullptr*/)
 	, m_delta5(0)
 	, m_delta6(0)
 	, m_usePose(TRUE)
+	, m_trajEndX(32.0)
+	, m_trajEndY(0.0)
+	, m_trajEndZ(85.0)
+	, m_trajSteps(11)
 	, m_resetSpeedRatio(4.0)
 	, m_accelSteps(3)
 	, m_loadThreshold(0.0)
@@ -115,6 +119,10 @@ void CKongTan8dianjiDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PITCH, m_theta_y);
 	DDX_Text(pDX, IDC_EDIT_YAW, m_theta_z);
 	DDX_Check(pDX, IDC_CHECK_USE_POSE, m_usePose);
+	DDX_Text(pDX, IDC_EDIT_TRAJ_END_X, m_trajEndX);
+	DDX_Text(pDX, IDC_EDIT_TRAJ_END_Y, m_trajEndY);
+	DDX_Text(pDX, IDC_EDIT_TRAJ_END_Z, m_trajEndZ);
+	DDX_Text(pDX, IDC_EDIT_TRAJ_STEPS, m_trajSteps);
 }
 
 BEGIN_MESSAGE_MAP(CKongTan8dianjiDlg, CDialogEx)
@@ -1264,7 +1272,8 @@ void CKongTan8dianjiDlg::ExecuteLinearTrajectory(
 
 void CKongTan8dianjiDlg::OnBnClickedBtnLinearTrajectory()
 {
-	// 预设参数：起点(52,0,65) -> 终点(32,0,65)，10个采样点，姿态为0
+	UpdateData(TRUE);  // 从界面读取 IK 起点 (m_ikX/m_ikY/m_ikZ)、终点 (m_trajEndX/Y/Z)、步数、姿态角
+
 	// 先复位到零位
 	std::vector<int> allIDs;
 	for (const CML::uint& id : MotorIds)
@@ -1274,12 +1283,14 @@ void CKongTan8dianjiDlg::OnBnClickedBtnLinearTrajectory()
 	}
 	SyncedTrapezoidalReset(allIDs);
 
+	double wr = m_usePose ? 0.01 : 0.0;
+
 	ExecuteLinearTrajectory(
-		52.0, 0.0, 85.0,     // start
-		32.0, 0.0, 85.0,     // end
-		11,                    // steps (10 segments = 11 points)
-		0.0, 0.0, 0.0,       // theta_x, theta_y, theta_z
-		0.0);                 // wr (no pose constraint)
+		m_ikX, m_ikY, m_ikZ,            // start (复用 IK 位置输入)
+		m_trajEndX, m_trajEndY, m_trajEndZ, // end
+		m_trajSteps,                      // steps
+		m_theta_x, m_theta_y, m_theta_z,  // theta_x, theta_y, theta_z
+		wr);                              // wr
 }
 
 void CKongTan8dianjiDlg::OnEnChangeEdit9()

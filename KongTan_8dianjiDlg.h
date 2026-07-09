@@ -109,6 +109,8 @@ public:
 		double wr,
 		double& delta1, double& delta2, double& delta3,
 		double& delta4, double& delta5, double& delta6);
+	double m_trajEndX, m_trajEndY, m_trajEndZ;
+	int m_trajSteps;
 	// 辅助方法：复位速度比例调节 + 梯形加减速（同时启停、同时到达）
 	double GetStartupSpeed(int motorID);
 	void SyncedTrapezoidalReset(const std::vector<int>& motorIDs);
