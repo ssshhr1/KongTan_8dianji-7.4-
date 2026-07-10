@@ -1187,11 +1187,26 @@ void CKongTan8dianjiDlg::ExecuteLinearTrajectory(
 	double theta_x_deg, double theta_y_deg, double theta_z_deg,
 	double wr)
 {
-	if (num_steps < 2) return;
+	if (num_steps < 2) {
+		MessageBox(_T("直线轨迹步数至少为 2。"), _T("轨迹错误"), MB_ICONERROR);
+		return;
+	}
+
+	const double dx = end_x - start_x;
+	const double dy = end_y - start_y;
+	const double dz = end_z - start_z;
+	const double length = std::sqrt(dx * dx + dy * dy + dz * dz);
+	if (length < 1e-6) {
+		MessageBox(_T("起始点和终点不能相同，请输入有效直线轨迹。"), _T("轨迹错误"), MB_ICONERROR);
+		return;
+	}
 
 	// Step 1: compute IK for each trajectory point, store absolute motor deltas
 	std::vector<double> delta_abs[6];
 	for (int k = 0; k < 6; k++) delta_abs[k].resize(num_steps, 0.0);
+	double last_pose_x = theta_x_deg;
+	double last_pose_y = theta_y_deg;
+	double last_pose_z = theta_z_deg;
 
 	for (int i = 0; i < num_steps; i++)
 	{
@@ -1199,12 +1214,25 @@ void CKongTan8dianjiDlg::ExecuteLinearTrajectory(
 		double px = start_x + t * (end_x - start_x);
 		double py = start_y + t * (end_y - start_y);
 		double pz = start_z + t * (end_z - start_z);
+		double next_t = (i < num_steps - 1) ? (double)(i + 1) / (num_steps - 1) : (double)(i - 1) / (num_steps - 1);
+		double next_x = start_x + next_t * (end_x - start_x);
+		double next_y = start_y + next_t * (end_y - start_y);
+		double next_z = start_z + next_t * (end_z - start_z);
+		if (i == num_steps - 1) {
+			ComputePoseTowardNextPoint(next_x, next_y, next_z, px, py, pz,
+				last_pose_x, last_pose_y, last_pose_z);
+		}
+		else {
+			ComputePoseTowardNextPoint(px, py, pz, next_x, next_y, next_z,
+				last_pose_x, last_pose_y, last_pose_z);
+		}
 
 		double d1, d2, d3, d4, d5, d6;
-		if (!ComputeDeltasFromPosition(px, py, pz, theta_x_deg, theta_y_deg, theta_z_deg, wr, d1, d2, d3, d4, d5, d6))
+		if (!ComputeDeltasFromPosition(px, py, pz, last_pose_x, last_pose_y, last_pose_z, wr, d1, d2, d3, d4, d5, d6))
 		{
 			CString msg;
-			msg.Format(_T("轨迹点 %d (%.1f, %.1f, %.1f) 逆解失败"), i, px, py, pz);
+			msg.Format(_T("轨迹点 %d (%.1f, %.1f, %.1f) 姿态(%.1f, %.1f, %.1f) 逆解失败"),
+				i, px, py, pz, last_pose_x, last_pose_y, last_pose_z);
 			MessageBox(msg, _T("轨迹错误"), MB_ICONERROR);
 			return;
 		}
@@ -1274,6 +1302,32 @@ void CKongTan8dianjiDlg::OnBnClickedBtnLinearTrajectory()
 {
 	UpdateData(TRUE);  // 从界面读取 IK 起点 (m_ikX/m_ikY/m_ikZ)、终点 (m_trajEndX/Y/Z)、步数、姿态角
 
+	if (m_trajSteps < 2) {
+		MessageBox(_T("直线轨迹步数至少为 2。"), _T("轨迹错误"), MB_ICONERROR);
+		return;
+	}
+
+	double traj_dx = m_trajEndX - m_ikX;
+	double traj_dy = m_trajEndY - m_ikY;
+	double traj_dz = m_trajEndZ - m_ikZ;
+	double traj_length = std::sqrt(traj_dx * traj_dx + traj_dy * traj_dy + traj_dz * traj_dz);
+	if (traj_length < 1e-6) {
+		MessageBox(_T("起始点和终点不能相同，请输入有效直线轨迹。"), _T("轨迹错误"), MB_ICONERROR);
+		return;
+	}
+
+	double first_pose_x = m_theta_x;
+	double first_pose_y = m_theta_y;
+	double first_pose_z = m_theta_z;
+	if (ComputePoseTowardNextPoint(m_ikX, m_ikY, m_ikZ, m_trajEndX, m_trajEndY, m_trajEndZ,
+		first_pose_x, first_pose_y, first_pose_z))
+	{
+		m_theta_x = first_pose_x;
+		m_theta_y = first_pose_y;
+		m_theta_z = first_pose_z;
+		UpdateData(FALSE);
+	}
+
 	// 先复位到零位
 	std::vector<int> allIDs;
 	for (const CML::uint& id : MotorIds)
@@ -1291,6 +1345,31 @@ void CKongTan8dianjiDlg::OnBnClickedBtnLinearTrajectory()
 		m_trajSteps,                      // steps
 		m_theta_x, m_theta_y, m_theta_z,  // theta_x, theta_y, theta_z
 		wr);                              // wr
+}
+
+bool CKongTan8dianjiDlg::ComputePoseTowardNextPoint(double current_x, double current_y, double current_z,
+	double next_x, double next_y, double next_z,
+	double& theta_x_deg, double& theta_y_deg, double& theta_z_deg)
+{
+	double dx = next_x - current_x;
+	double dy = next_y - current_y;
+	double dz = next_z - current_z;
+	double length = std::sqrt(dx * dx + dy * dy + dz * dz);
+	if (length < 1e-6) {
+		return false;
+	}
+
+	dx /= length;
+	dy /= length;
+	dz /= length;
+
+	double yaw = std::atan2(dy, dx);
+	double pitch = std::atan2(std::sqrt(dx * dx + dy * dy), dz);
+
+	theta_x_deg = 0.0;
+	theta_y_deg = pitch * 180.0 / M_PI;
+	theta_z_deg = yaw * 180.0 / M_PI;
+	return true;
 }
 
 void CKongTan8dianjiDlg::OnEnChangeEdit9()
