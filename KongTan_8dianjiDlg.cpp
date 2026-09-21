@@ -15,7 +15,7 @@ using namespace Eigen;
 #endif
 
 //————————————————————————————————————————
-const std::set<CML::uint> MotorIds = { 1, 2, 3, 4, 5, 6/*, 7, 8*/ }; // 电机ID
+const std::set<CML::uint> MotorIds = { 1, 2, 3, 4, 5, 6, 7, 8 }; // 电机ID
 //————————————————————————————————————————
 
 
@@ -156,22 +156,22 @@ void CKongTan8dianjiDlg::InitMotorSoftLimits()
 {
 	// 清空现有配置
 	m_motorSoftLimits.clear();
-	// 电机1
-	m_motorSoftLimits[1] = { 100000.0, -100000.0 };
+	// 电机1: ±90°弯角时delta1最大约227k，留余量1M
+	m_motorSoftLimits[1] = { 2000000.0, -2000000.0 };
 	// 电机2
-	m_motorSoftLimits[2] = { 100000.0, -100000.0 };
+	m_motorSoftLimits[2] = { 3000000.0, -3000000.0 };
 	// 电机3
-	m_motorSoftLimits[3] = { 100000.0, -100000.0 };
+	m_motorSoftLimits[3] = { 3000000.0, -3000000.0 };
 	// 电机4
-	m_motorSoftLimits[4] = { 100000.0, -100000.0 };
-	// 电机5
-	m_motorSoftLimits[5] = { 0.0, -300000.0 };
-	// 电机6
-	m_motorSoftLimits[6] = { 300000.0, 0.0 };
+	m_motorSoftLimits[4] = { 2000000.0, -2000000.0 };
+	// 电机5: ±90°弯角时delta5约±270k，留余量1M
+	m_motorSoftLimits[5] = { 2000000.0, -2000000.0 };
+	// 电机6: ±90°弯角时delta6约±810k，留余量2M
+	m_motorSoftLimits[6] = { 3000000.0, -3000000.0 };
 	// 电机7
-	// m_motorSoftLimits[7] = { 50000.0, -50000.0 };
+	m_motorSoftLimits[7] = { 50000.0, -50000.0 };
 	// 电机8
-	// m_motorSoftLimits[8] = { 50000.0, -50000.0 };
+	m_motorSoftLimits[8] = { 50000.0, -50000.0 };
 
 	//TRACE(_T("Motor soft limits configured for %d motors\n"), m_motorSoftLimits.size());
 }
@@ -243,6 +243,7 @@ BOOL CKongTan8dianjiDlg::OnInitDialog()
 				}
 			}
 			// 4. 为电机设置软限位
+			InitMotorSoftLimits();
 			for (const CML::uint& motorId : MotorIds)
 			{
 				auto it = m_motorSoftLimits.find(motorId);
@@ -261,15 +262,11 @@ BOOL CKongTan8dianjiDlg::OnInitDialog()
 							motorId, posLimit, negLimit);
 					}
 				}
-				else
-				{
-					// 如果有电机ID但没有设置软限位
-					//TRACE(_T("Warning: No soft limit config found for motor %d, skipping...\n"), motorId);
-					// 锁住不要乱动
-					double defaultPosLimit = 100.0;
-					double defaultNegLimit = -100.0;
-					m_motorCtrl.SetSoftLimit(motorId, defaultPosLimit, defaultNegLimit);
-				}
+			else
+			{
+				// 电机未配置软限位，跳过
+				TRACE(_T("Warning: No soft limit config for motor %d, skipping...\n"), motorId);
+			}
 			}
 			//TRACE(_T("Motor initialization completed! Total motors initialized: %d\n"), m_motorZeroPos.size());
 		}
@@ -1041,14 +1038,13 @@ void CKongTan8dianjiDlg::SolveAndExecuteIK(double target_x, double target_y, dou
 	Matrix3d R_target = Rz(tz) * Ry(ty) * Rx(tx);
 
 	VectorXd lb(5), ub(5);
-	lb << 0.0, 0.0, 0.0, 0.0, 0.0;
+	lb << 0.0, 0.0, -M_PI / 11.0, -M_PI / 15.91, 0.0;
 	ub << 0.0, 0.0, M_PI / 11.0, M_PI / 15.91, 2.0 * M_PI;
 
 	auto res_func = [&](const VectorXd& q) -> VectorXd {
 		return residual(q, p_target, R_target, 1.0, wr, params);
 		};
 
-	// 多起始点
 	std::vector<VectorXd> q0_list;
 	q0_list.push_back((VectorXd(5) << 0, 0, 0.08, 0.08, M_PI / 6.0).finished());
 	q0_list.push_back((VectorXd(5) << 0, 0, 0.05, 0.05, M_PI / 4.0).finished());
@@ -1056,6 +1052,9 @@ void CKongTan8dianjiDlg::SolveAndExecuteIK(double target_x, double target_y, dou
 	q0_list.push_back((VectorXd(5) << 0, 0, 0.15, 0.15, 0.0).finished());
 	q0_list.push_back((VectorXd(5) << 0, 0, 0.07, 0.07, -M_PI / 6.0).finished());
 	q0_list.push_back((VectorXd(5) << 0, 0, 0.09, 0.09, M_PI / 2.0).finished());
+	q0_list.push_back((VectorXd(5) << 0, 0, -0.08, -0.08, M_PI / 6.0).finished());
+	q0_list.push_back((VectorXd(5) << 0, 0, -0.05, -0.05, M_PI / 4.0).finished());
+	q0_list.push_back((VectorXd(5) << 0, 0, -0.12, -0.12, M_PI / 3.0).finished());
 
 	VectorXd best_q;
 	double best_err = 1e30;
@@ -1398,10 +1397,9 @@ bool CKongTan8dianjiDlg::ComputeDeltasFromPosition(double target_x, double targe
 
 	// 关节边界
 	VectorXd lb(5), ub(5);
-	lb << 0.0, 0.0, 0.0, 0.0, 0.0;
+	lb << 0.0, 0.0, -M_PI / 11.0, -M_PI / 15.91, 0.0;
 	ub << 0.0, 0.0, M_PI / 11.0, M_PI / 15.91, 2.0 * M_PI;
 
-	// 多起始点（与 zuobioadianweizi.cpp 相同）
 	std::vector<VectorXd> q0_list;
 	q0_list.push_back((VectorXd(5) << 0, 0, 0.08, 0.08, M_PI / 6.0).finished());
 	q0_list.push_back((VectorXd(5) << 0, 0, 0.05, 0.05, M_PI / 4.0).finished());
@@ -1409,6 +1407,9 @@ bool CKongTan8dianjiDlg::ComputeDeltasFromPosition(double target_x, double targe
 	q0_list.push_back((VectorXd(5) << 0, 0, 0.15, 0.15, 0.0).finished());
 	q0_list.push_back((VectorXd(5) << 0, 0, 0.07, 0.07, -M_PI / 6.0).finished());
 	q0_list.push_back((VectorXd(5) << 0, 0, 0.09, 0.09, M_PI / 2.0).finished());
+	q0_list.push_back((VectorXd(5) << 0, 0, -0.08, -0.08, M_PI / 6.0).finished());
+	q0_list.push_back((VectorXd(5) << 0, 0, -0.05, -0.05, M_PI / 4.0).finished());
+	q0_list.push_back((VectorXd(5) << 0, 0, -0.12, -0.12, M_PI / 3.0).finished());
 
 	// 残差函数：使用位置权重 1.0，姿态权重 wr
 	auto res_func = [&](const VectorXd& q) -> VectorXd {

@@ -1,0 +1,61 @@
+#line 1 "C:\\Users\\Lenovo\\Desktop\\KongTan_8dianji\\KongTan_9Axis_Arduino_20260921\\firmware\\FeedAxis\\FeedAxis.ino"
+#include <Arduino.h>
+#if !defined(__AVR_ATmega2560__)
+#error "Select Arduino Mega 2560 / ATmega2560"
+#endif
+#include "BoardConfig.h"
+#include "FeedCore.h"
+
+feedwire::Core feed(WIRING_CONFIRMED && PINS_VALID);
+char rx[128] = {}, tx[96] = {};
+unsigned rxSize=0, txSize=0, txOffset=0;
+bool overflow=false;
+
+#line 13 "C:\\Users\\Lenovo\\Desktop\\KongTan_8dianji\\KongTan_9Axis_Arduino_20260921\\firmware\\FeedAxis\\FeedAxis.ino"
+void setup();
+#line 22 "C:\\Users\\Lenovo\\Desktop\\KongTan_8dianji\\KongTan_9Axis_Arduino_20260921\\firmware\\FeedAxis\\FeedAxis.ino"
+void loop();
+#line 13 "C:\\Users\\Lenovo\\Desktop\\KongTan_8dianji\\KongTan_9Axis_Arduino_20260921\\firmware\\FeedAxis\\FeedAxis.ino"
+void setup() {
+    if (feed.wiring) {
+        // Set inactive latch levels before enabling output mode.
+        digitalWrite(ENABLE_PIN, !ENABLE_ACTIVE_LEVEL); pinMode(ENABLE_PIN, OUTPUT);
+        digitalWrite(STEP_PIN, !STEP_ACTIVE_LEVEL); pinMode(STEP_PIN, OUTPUT);
+        digitalWrite(DIR_PIN, DIR_POSITIVE_LEVEL); pinMode(DIR_PIN, OUTPUT);
+    }
+    Serial.begin(115200);
+}
+void loop() {
+    // At most one received byte per loop; serial handling never waits for a line.
+    if (Serial.available()>0) {
+        const char c=(char)Serial.read();
+        if (c=='\n') {
+            rx[rxSize]=0;
+            if (overflow || txOffset<txSize || !feedwire::decode(rx)) feed.badFrame();
+            else {
+                char payload[80];
+                feed.command(rx, millis(), payload, sizeof(payload));
+                if (feedwire::encode(payload, tx, sizeof(tx))) { txSize=(unsigned)strlen(tx); txOffset=0; }
+                else feed.badFrame();
+            }
+            rxSize=0; overflow=false;
+        } else if (c!='\r') {
+            if (rxSize+1<sizeof(rx)) rx[rxSize++]=c;
+            else { overflow=true; feed.badFrame(); }
+        }
+    }
+    // Never block on the UART transmit buffer during pulse generation.
+    if (txOffset<txSize && Serial.availableForWrite()>0) Serial.write((uint8_t)tx[txOffset++]);
+    const int pulse=feed.tick(millis(), micros());
+    if (feed.wiring) {
+        digitalWrite(ENABLE_PIN, feed.enabled ? ENABLE_ACTIVE_LEVEL : !ENABLE_ACTIVE_LEVEL);
+        if (pulse) {
+            digitalWrite(DIR_PIN, pulse>0 ? DIR_POSITIVE_LEVEL : !DIR_POSITIVE_LEVEL);
+            delayMicroseconds(DIR_SETUP_US);
+            digitalWrite(STEP_PIN, STEP_ACTIVE_LEVEL);
+            delayMicroseconds(PULSE_US);
+            digitalWrite(STEP_PIN, !STEP_ACTIVE_LEVEL);
+        }
+    }
+}
+

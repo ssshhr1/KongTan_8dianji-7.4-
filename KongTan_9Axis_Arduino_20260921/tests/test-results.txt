@@ -1,0 +1,31 @@
+PASS three-section axis and sign mapping
+PASS unconfirmed configuration never opens
+PASS startup enable rollback
+PASS startup limit rollback before movement
+PASS feed moves last and all axes participate
+PASS feed limited segments
+PASS barrier blocks next segment while one axis lags
+PASS stale done cannot bypass position check
+PASS duration guard blocks old completion
+PASS target rejection sends no moves
+PASS NaN rejected
+PASS timeout stops every transport
+PASS profile failure prevents all starts
+PASS partial robot dispatch failure prevents feed
+PASS feed dispatch failure stops robot
+PASS runtime robot fault stops linked move
+PASS runtime feed link loss stops robot
+PASS full positive and negative linked endpoints
+PASS CRC corruption and truncation
+PASS unconfirmed wiring prevents enable and pulses
+PASS sequence replay latches stop
+PASS integer overflow and trailing tokens rejected
+PASS overspeed and overacceleration rejected
+PASS firmware soft limits enforced
+PASS host watchdog stops pulses within configured interval
+PASS stop command cuts pulse generation
+PASS timed pulse generation reaches signed target without bursts
+PASS watchdog tolerates unsigned millis rollover
+PASS bad frame clears motion and requires reconfiguration
+PASS planner lag faults instead of unlimited catch-up
+All 30 test groups passed. No hardware accessed.

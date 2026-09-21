@@ -1,13 +1,8 @@
 # Progress
 
-- 2026-07-10: Created lightweight file-based plan before inspecting the project.
-- 2026-07-10: Listed project root and searched for coordinate/trajectory keywords.
-- 2026-07-10: Read dialog header and the existing IK/linear trajectory implementation.
-- 2026-07-10: Confirmed existing UI bindings for start, end, step count, pose checkbox, and linear trajectory button.
-- 2026-07-10: Read rotation/FK/residual code and chose to derive line pose from adjacent-point tangent direction.
-- 2026-07-10: Added tangent-pose helper and integrated it into linear trajectory IK generation.
-- 2026-07-10: Moved invalid step-count and zero-length trajectory checks before motor reset in the button handler.
-- 2026-07-10: Re-read modified header and trajectory implementation to sanity-check declarations, ordering, and input validation.
-- 2026-07-10: Searched common Visual Studio 2022 and x86 MSBuild locations; found `vswhere.exe` but not MSBuild directly.
-- 2026-07-10: Ran Debug|x64 build with MSBuild. C++ compilation reached resource compile; build failed at `KongTan8dianji.rc(98): error RC2104: undefined keyword or key name: MS`.
-- 2026-07-10: Captured changed-code line numbers for final summary.
+- 2026-07-16: Created persistent plan and began source inspection.
+- 2026-07-16: Initial attempt to read the planning skill was blocked by sandbox process permissions; retried successfully with approved elevated read access.
+- 2026-07-16: Located the third-segment failure at the global configured-motor set and confirmed existing motor 7/8 handlers are complete.
+- 2026-07-16: Enabled motors 7 and 8 and activated their +/-50,000-count soft limits while preserving existing user changes for motors 1-6 and inverse kinematics.
+- 2026-07-16: `git diff --check` passed.
+- 2026-07-16: Debug x64 MSBuild compiled the C++ sources, then failed in the existing resource file at line 98 with RC2104; no new C++ compiler errors were reported.

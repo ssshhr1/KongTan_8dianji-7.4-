@@ -1,0 +1,28 @@
+PASS unconfirmed config never opens hardware
+PASS invalid node limits speed direction timeout and NaN rejected
+PASS robot must contain exactly all eight unique nodes
+PASS nine axes setup before any enable
+PASS partial bus initialization rolls back
+PASS every failing limit rolls back before enabling
+PASS every failing enable rolls back earlier axes
+PASS invalid initial position prevents enable
+PASS feed profile failure rolls back
+PASS feed target feedback and busy interlock
+PASS feed direction independent and node configurable
+PASS feed bounds and nonfinite target send nothing
+PASS feed command failure stops nine axes
+PASS wrong reached position does not complete then times out
+PASS loss of any axis feedback stops all
+PASS drive fault and disabled feedback stop all
+PASS stop does not command home and reports failure
+PASS demo completes precisely three blades without hardware
+PASS index waits for scan completion AND retraction
+PASS single blade completion stops instead of indexing
+PASS invalid plans rejected before backend command
+PASS prepare tracking retract index failures stop backend
+PASS phase loss excessive error and NaN abort tracking
+PASS read fault stale future wrong run or blade abort
+PASS state timeout and backwards clock abort
+PASS stop during tracking forbids subsequent index
+PASS failed stop remains fault rather than success
+All 27 test groups passed. No hardware accessed.

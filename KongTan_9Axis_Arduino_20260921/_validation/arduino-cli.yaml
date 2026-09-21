@@ -1,0 +1,8 @@
+directories:
+  data: C:/Users/Lenovo/Desktop/KongTan_8dianji/KongTan_9Axis_Arduino_20260921/_validation/arduino-data
+  downloads: C:/Users/Lenovo/Desktop/KongTan_8dianji/KongTan_9Axis_Arduino_20260921/_validation/arduino-downloads
+  user: C:/Users/Lenovo/Desktop/KongTan_8dianji/KongTan_9Axis_Arduino_20260921/_validation/arduino-user
+build_cache:
+  path: C:/Users/Lenovo/Desktop/KongTan_8dianji/KongTan_9Axis_Arduino_20260921/_validation/arduino-cache
+updater:
+  enable_notification: false

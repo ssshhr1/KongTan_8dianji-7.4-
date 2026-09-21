@@ -1,19 +1,18 @@
 # Findings
 
-## Architecture
+## Investigation
 
-- 2026-07-10: Investigation pending.
-- 2026-07-10: Main coordinate and trajectory logic appears in `KongTan_8dianjiDlg.cpp`, especially around existing IK and linear trajectory handlers.
-- 2026-07-10: `OnBnClickedBtnLinearTrajectory` already reads `m_ikX/m_ikY/m_ikZ` as the trajectory start and `m_trajEndX/Y/Z` as the end. `ExecuteLinearTrajectory` interpolates positions but currently passes a fixed pose to every IK call.
-- 2026-07-10: `resource.h`, `.rc`, constructor, and DDX already define inputs for start point (`IDC_EDIT_IK_X/Y/Z`) and trajectory end/steps. No new controls are needed for start coordinate entry.
-- 2026-07-10: FK constructs the tool transform along local Z. A natural next-point pose for a line is therefore a rotation whose local Z axis follows the vector from the current trajectory point to the next point.
+- 2026-07-16: `MotorIds` contained only motors 1-6; motors 7 and 8 were commented out, so all third-segment handlers returned at their availability guard.
+- 2026-07-16: Third-segment down/up/reset handlers already command motors 7 and 8 as an opposing pair and use `motor_V78`/`motor_S78`.
+- 2026-07-16: The default third-segment step is 10,000 counts; the existing but disabled soft-limit design for motors 7 and 8 is +/-50,000 counts.
 
 ## Bugs
 
-- 2026-07-10: No bugs recorded yet.
-- 2026-07-10: Build is blocked by `KongTan8dianji.rc(98): error RC2104: undefined keyword or key name: MS`, apparently in the resource file rather than the new C++ trajectory logic.
+- 2026-07-16: Motors 7 and 8 were excluded from initialization, zero capture, reset, shutdown waiting, and third-segment motion. Status: fixed by including them in `MotorIds`.
+- 2026-07-16: Motors 7 and 8 had no active soft-limit configuration. Status: fixed with the existing intended +/-50,000-count limits.
+- 2026-07-16: Full Debug x64 build is blocked by pre-existing `KongTan8dianji.rc(98): RC2104 undefined keyword or key name: MS`; the changed C++ translation unit compiled successfully. Status: unrelated/open.
 
-## Implementation
+## Architecture
 
-- 2026-07-10: Added `ComputePoseTowardNextPoint`; it sets local tool Z toward the next trajectory point using `Rx=0`, `Ry=atan2(horizontal, dz)`, `Rz=atan2(dy, dx)`.
-- 2026-07-10: Invalid linear trajectory inputs are now rejected in the button handler before any motor reset or movement is attempted.
+- `MotorIds` is the central configured-motor set used by initialization, zero capture, soft-limit application, reset, availability guards, and shutdown waiting.
+- `EnableMotorBus()` enables the bus; membership in `MotorIds` determines which amplifiers the application subsequently initializes and commands.

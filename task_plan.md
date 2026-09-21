@@ -1,23 +1,24 @@
-# Task Plan: Start Point And Line Trajectory
+# Task Plan: Enable All Motors and Third-Segment Motion
 
 ## Phases
 
-- [x] Phase 1: Inspect current coordinate and trajectory flow
-  - [x] Locate dialog controls and handlers for coordinate input.
-  - [x] Locate motion/path generation code.
-- [x] Phase 2: Implement feature
-  - [x] Add or connect start-point input handling.
-  - [x] Compute the next point pose for a straight-line segment.
-  - [x] Integrate straight-line trajectory generation with existing output.
+- [x] Phase 1: Inspect project control flow
+  - [x] Locate motor enable/disable logic.
+  - [x] Locate third-segment motion and soft-limit logic.
+- [x] Phase 2: Implement coordinated changes
+  - [x] Enable every configured motor.
+  - [x] Include the third segment in commanded motion.
+  - [x] Adjust only the soft limits required by the new motion range.
 - [x] Phase 3: Verify
-  - [x] Build or run available checks.
-  - [x] Summarize changed files and behavior.
+  - [x] Review diffs and control-path consistency.
+  - [x] Run available build or static checks.
 
 ## Decisions
 
-- 2026-07-10: Keep changes scoped to the existing MFC project patterns.
+- 2026-07-16: Preserve existing control architecture and make the smallest coherent change because this is hardware-control code.
+- 2026-07-16: Use +/-50,000 counts for motors 7 and 8 because the code already designated that range and the default manual step is 10,000 counts.
+- 2026-07-16: Treat the existing resource-compiler error at `KongTan8dianji.rc(98)` as outside this change; C++ compilation completed successfully before that stage.
 
 ## Notes
 
-- User request: input a starting coordinate point, judge the next point pose, and complete a straight-line trajectory.
-- Verification note: MSBuild Debug|x64 reached resource compilation and failed at existing `KongTan8dianji.rc(98)` with `RC2104`, not in the modified C++ trajectory code.
+- Do not broaden physical travel ranges beyond what the existing configuration and commanded trajectory justify.
